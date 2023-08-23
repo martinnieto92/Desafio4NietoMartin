@@ -1,0 +1,29 @@
+[
+	{
+		"title": "mesa",
+		"description": "cuadrada",
+		"price": 500,
+		"thumbnail": "foto",
+		"code": 123,
+		"stock": 500,
+		"id": 1
+	},
+	{
+		"title": "mate",
+		"description": "redondo",
+		"price": 2500000,
+		"thumbnail": "foto",
+		"code": 321,
+		"stock": 300,
+		"id": 2
+	},
+	{
+		"title": "notebook",
+		"description": "roja",
+		"price": 9500,
+		"thumbnail": "foto",
+		"code": 323,
+		"stock": 100,
+		"id": 3
+	}
+]
