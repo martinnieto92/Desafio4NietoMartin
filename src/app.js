@@ -1,12 +1,12 @@
 const express = require('express');
 const fs = require('fs');
-const ProductManager = require('./productManager'); // Asegúrate de que la ruta sea correcta
+const ProductManager = require('./productManager'); // 
 
 const app = express();
-const port = 3000; // Puedes cambiar el puerto si es necesario
+const port = 3000; // 
 
 // Crear una instancia de ProductManager
-const path = '../archivos/textoSincrono.json'; // Asegúrate de que la ruta sea correcta
+const path = '../archivos/textoSincrono.json'; // 
 const productManager = new ProductManager(path);
 
 app.use(express.json());
@@ -15,7 +15,7 @@ app.use(express.json());
 app.get('/products', (req, res) => {
     const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
     const products = productManager.getProducts();
-    
+
     if (limit !== undefined) {
         res.json(products.slice(0, limit));
     } else {
@@ -25,8 +25,7 @@ app.get('/products', (req, res) => {
 
 // Obtener un producto por su ID
 app.get('/products/:pid', (req, res) => {
-    const productId = parseInt(req.params.pid);
-    const product = productManager.getProductById(productId);
+    const product = productManager.getProductById(parseInt(req.params.pid));
 
     if (product) {
         res.json(product);

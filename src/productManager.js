@@ -2,9 +2,13 @@ const fs = require('fs')
 
 class ProductManager {
     constructor(filePath) {
-        this.Products = [];
+        this.Products = this.readJson(filePath);
         this.path = filePath;
-        
+    }
+
+    //Leer JSON
+    readJson(filePath) {
+        return JSON.parse(fs.readFileSync(filePath));
     }
 
      // Guardar productos en el archivo
@@ -76,30 +80,5 @@ class ProductManager {
 
 }
 
-let path = '../archivos/textoSincrono.json'
-
-
-let tm = new ProductManager(path);
-console.log(tm.getProducts());
-
-
-tm.addProduct('mesa', 'cuadrada', 500, 'foto', 123, 500);
-tm.addProduct('mate', 'redondo', 200, 'foto', 321, 300);
-tm.addProduct('notebook', 'roja', 9500, 'foto', 323, 100);
-//tm.addProduct('notebook', 'roja', 9500, 'foto', 323, 100);
-console.log(tm.getProducts()); //arreglo vacio
-
-const product = tm.getProductById(3);
-
-if (product !== undefined) {
-    console.log("Producto encontrado:", product);
-    fs.writeFileSync(path, JSON.stringify(product, null, '\t'))
-}
-
-tm.updateProduct(2, 'price', 2500000); // Actualizar el precio del producto con ID 2,, en este caso solo actualizo una variable
-console.log(tm)
-
-//tm.deleteProduct(1); // Eliminar el producto con ID 1
-console.log(tm)
 
 module.exports = ProductManager;
