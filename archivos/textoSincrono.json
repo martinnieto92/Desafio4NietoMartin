@@ -4,7 +4,7 @@
 		"description": "cuadrada",
 		"price": 500,
 		"thumbnail": "foto",
-		"code": 123,
+		"code": "222222",
 		"stock": 500,
 		"id": 1
 	},
@@ -25,5 +25,32 @@
 		"code": 323,
 		"stock": 100,
 		"id": 3
+	},
+	{
+		"title": "termo",
+		"description": "acero",
+		"price": 90500,
+		"thumbnail": "foto",
+		"code": 1222,
+		"stock": 500,
+		"id": 4
+	},
+	{
+		"title": "mouse",
+		"description": "negro",
+		"price": 1500,
+		"thumbnail": "foto",
+		"code": 311,
+		"stock": 300,
+		"id": 5
+	},
+	{
+		"title": "televisor",
+		"description": "plasma",
+		"price": 101000,
+		"thumbnail": "foto",
+		"code": 32322,
+		"stock": 100,
+		"id": 6
 	}
 ]
