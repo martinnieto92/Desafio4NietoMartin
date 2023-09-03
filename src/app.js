@@ -61,25 +61,54 @@ app.delete('/api/products/:id', (req, res) => {
 });
 
 
-// Agregar un nuevo carrito
+// Ruta raíz para crear un nuevo carrito
 app.post('/api/carts', (req, res) => {
-    const { products } = req.body;
-    carritoManager.addCarrito(products);
-    res.sendStatus(201);
+    const newCart = {
+        products: []
+    };
+    carritoManager.addCarrito(newCart);
+    res.status(201).json(newCart);
 });
 
-// Obtener la lista de productos con posibilidad de límite
-app.get('/api/carts', (req, res) => {
-    const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
-    const carrito = carritoManager.getCarrito();
+// Ruta para listar los productos que pertenecen a un carrito específico
+app.get('/api/carts/:cid', (req, res) => {
+    const cartId = req.params.cid;
+    const cart = carritoManager.getCarritoById(cartId);
 
-    if (limit !== undefined) {
-        res.json(carrito.slice(0, limit));
+    if (!cart) {
+        res.status(404).json({ error: `No se encontró ningún carriasdto con el ID ${cartId}` });
     } else {
-        res.json(carrito);
+        res.json(cart.products);
     }
 });
 
+// Ruta para agregar un producto al carrito
+app.post('/api/carts/:cid/product/:pid', (req, res) => {
+    const cartId = req.params.cid;
+    const productId = req.params.pid;
+    const { quantity } = req.body;
+
+    const cart = carritoManager.getCarritoById(cartId);
+    const productToAdd = productManager.getProductById(productId);
+
+    if (!cart) {
+        res.status(404).json({ error: `No se encontró ningún carrito con el ID ${cartId}` });
+    } else if (!productToAdd) {
+        res.status(404).json({ error: `No se encontró ningún producto con el ID ${productId}` });
+    } else {
+        const existingProduct = cart.products.find(item => item.product === productId);
+
+        if (existingProduct) {
+            existingProduct.quantity += quantity || 1;
+        } else {
+            cart.products.push({ product: productId, quantity: quantity || 1 });
+        }
+
+        carritoManager.updateCarrito(cart);
+
+        res.status(201).json(cart);
+    }
+});
 
 // Iniciar el servidor
 app.listen(port, () => {

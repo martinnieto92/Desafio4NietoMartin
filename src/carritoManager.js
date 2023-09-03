@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('fs');
 
 class CarritoManager {
     constructor(filePath) {
@@ -6,28 +6,24 @@ class CarritoManager {
         this.path = filePath;
     }
 
-    //Leer JSON
     readJson(filePath) {
         return JSON.parse(fs.readFileSync(filePath));
     }
 
-     // Guardar productos en el archivo
     saveCarrito() {
         fs.writeFileSync(this.path, JSON.stringify(this.Carrito, null, '\t'));
     }
 
-    // Actualizar un campo específico de un producto por su ID
     updateProduct(id, field, value) {
         const productToUpdate = this.Carrito.find(product => product.id === id);
         if (!productToUpdate) {
             console.log(`Error: No se encontró ningún producto con el ID ${id}.`);
             return;
         }
-        productToUpdate[field] = value; // Actualizar el campo especificado
-        this.saveCarrito(); // Guardar cambios después de actualizar
+        productToUpdate[field] = value;
+        this.saveCarrito();
     }
 
-     // Eliminar un producto por su ID
     deleteProduct(id) {
         const indexToDelete = this.Carrito.findIndex(product => product.id === id);
         if (indexToDelete === -1) {
@@ -35,29 +31,28 @@ class CarritoManager {
             return;
         }
 
-        this.Carrito.splice(indexToDelete, 1); // Eliminar el producto de la lista
-        this.saveCarrito(); // Guardar cambios después de eliminar
+        this.Carrito.splice(indexToDelete, 1);
+        this.saveCarrito();
     }
 
     getCarrito() {
-        return this.Carrito
+        return this.Carrito;
+    }
+
+    getCarritoById(id) {
+        return this.Carrito.find(cart => cart.id === id);
     }
 
     addCarrito(products) {
-        
-        let nuevoProductoCarrito = {
+        const newCart = {
+            id: this.Carrito.length === 0 ? 1 : this.Carrito.length + 1,
             products
-        }
-        if (this.Carrito.length === 0) {
-            nuevoProductoCarrito.id = 1
-        }
-        else
-            nuevoProducto.id = this.Carrito.length + 1
-
-        this.Carrito.push(nuevoProductoCarrito)
+        };
+    
+        this.Carrito.push(newCart);
+        this.saveCarrito();
+    }
+    
 }
-
-}
-
 
 module.exports = CarritoManager;
