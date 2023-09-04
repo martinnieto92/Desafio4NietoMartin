@@ -24,7 +24,7 @@ class CarritoManager {
         this.saveCarrito();
     }
 
-    deleteProduct(id) {
+    deleteCarrito(id) {
         const indexToDelete = this.Carrito.findIndex(product => product.id === id);
         if (indexToDelete === -1) {
             console.log(`Error: No se encontró ningún producto con el ID ${id}.`);
@@ -44,14 +44,14 @@ class CarritoManager {
     }
 
     addCarrito(products) {
-        const newCart = {
-            id: this.Carrito.length === 0 ? 1 : this.Carrito.length + 1,
-            products
-        };
-    
-        this.Carrito.push(newCart);
-        this.saveCarrito();
-    }
+    const newCart = {
+        id: this.Carrito.length === 0 ? 1 : this.Carrito.length + 1,
+        products: products || []
+    };
+
+    this.Carrito.push(newCart);
+    this.saveCarrito();
+}
     
 }
 

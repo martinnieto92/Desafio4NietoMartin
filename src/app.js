@@ -72,7 +72,7 @@ app.post('/api/carts', (req, res) => {
 
 // Ruta para listar los productos que pertenecen a un carrito específico
 app.get('/api/carts/:cid', (req, res) => {
-    const cartId = req.params.cid;
+    const cartId = parseInt(req.params.cid);
     const cart = carritoManager.getCarritoById(cartId);
 
     if (!cart) {
@@ -82,17 +82,37 @@ app.get('/api/carts/:cid', (req, res) => {
     }
 });
 
+// Ruta para listar los productos que pertenecen a un carrito específico
+app.get('/api/carts', (req, res) => {
+    const cart = carritoManager.getCarrito();
+
+    if (!cart) {
+        res.status(404).json({ error: `No se encontró ningún carriasdto con el ID ${cartId}` });
+    } else {
+        res.json(cart);
+    }
+});
+
+// Eliminar un carrito por su ID
+app.delete('/api/carts/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    carritoManager.deleteCarrito(id);
+    res.sendStatus(204);
+});
+
+
+
 // Ruta para agregar un producto al carrito
 app.post('/api/carts/:cid/product/:pid', (req, res) => {
-    const cartId = req.params.cid;
-    const productId = req.params.pid;
+    const cartId = parseInt(req.params.cid);
+    const productId = parseInt(req.params.pid);
     const { quantity } = req.body;
 
     const cart = carritoManager.getCarritoById(cartId);
     const productToAdd = productManager.getProductById(productId);
 
     if (!cart) {
-        res.status(404).json({ error: `No se encontró ningún carrito con el ID ${cartId}` });
+        res.status(404).json({ error: `No se encontró ningún c44arrito con el ID ${cartId}` });
     } else if (!productToAdd) {
         res.status(404).json({ error: `No se encontró ningún producto con el ID ${productId}` });
     } else {
