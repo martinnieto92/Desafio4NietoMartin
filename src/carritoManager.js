@@ -14,7 +14,7 @@ class CarritoManager {
         fs.writeFileSync(this.path, JSON.stringify(this.Carrito, null, '\t'));
     }
 
-    updateProduct(id, field, value) {
+    updateCarrito(id, field, value) {
         const productToUpdate = this.Carrito.find(product => product.id === id);
         if (!productToUpdate) {
             console.log(`Error: No se encontró ningún producto con el ID ${id}.`);
@@ -43,10 +43,10 @@ class CarritoManager {
         return this.Carrito.find(cart => cart.id === id);
     }
 
-    addCarrito(products) {
+    addCarrito() {
     const newCart = {
         id: this.Carrito.length === 0 ? 1 : this.Carrito.length + 1,
-        products: products || []
+        products: []
     };
 
     this.Carrito.push(newCart);

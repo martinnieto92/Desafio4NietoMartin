@@ -63,12 +63,11 @@ app.delete('/api/products/:id', (req, res) => {
 
 // Ruta raíz para crear un nuevo carrito
 app.post('/api/carts', (req, res) => {
-    const newCart = {
-        products: []
-    };
+    const newCart = []; // Inicializa newCart como una matriz vacía
     carritoManager.addCarrito(newCart);
     res.status(201).json(newCart);
 });
+
 
 // Ruta para listar los productos que pertenecen a un carrito específico
 app.get('/api/carts/:cid', (req, res) => {
@@ -110,6 +109,10 @@ app.post('/api/carts/:cid/product/:pid', (req, res) => {
 
     const cart = carritoManager.getCarritoById(cartId);
     const productToAdd = productManager.getProductById(productId);
+
+    console.log('Cart:', cart);
+    console.log('Product:', productToAdd);
+    console.log('ProductId:', productId);
 
     if (!cart) {
         res.status(404).json({ error: `No se encontró ningún c44arrito con el ID ${cartId}` });
