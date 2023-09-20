@@ -1,139 +1,49 @@
 const express = require('express');
-const fs = require('fs');
-const ProductManager = require('./productManager'); // 
-const CarritoManager = require ('./carritoManager');
-
+//const fs = require('fs');
+const productRoutes = require('./routes/productRoutes.js')
+const cartRoutes = require('./routes/cartRoutes.js')
 const app = express();
 const port = 8080; // 
+const handlebars = require('express-handlebars');
+const http = require('http');
+const socketIo = require('socket.io');
+const server = http.createServer(app);
+const io = socketIo(server);
 
-// Crear una instancia de ProductManager
-const path = '../archivos/textoSincrono.json'; // 
-const productManager = new ProductManager(path);
-// Crear una instancia de CarritoManager
-const path2 = '../archivos/textoSincrono2.json'; // 
-const carritoManager = new CarritoManager(path2);
+
+// Configura Handlebars como motor de plantillas
+
+app.engine('handlebars',handlebars.engine())
+app.set('views',__dirname+'/views')
+app.set('view engine','handlebars')
 
 app.use(express.json());
+app.use(express.urlencoded({extended:true}))
+app.use(express.static(path.join(__dirname,'/public')));
 
-// Obtener la lista de productos con posibilidad de límite
-app.get('/api/products', (req, res) => {
-    const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
-    const products = productManager.getProducts();
+app.use('/api/products', productRoutes)
+app.use('/api/carts', cartRoutes)
 
-    if (limit !== undefined) {
-        res.json(products.slice(0, limit));
-    } else {
-        res.json(products);
-    }
-});
+// Escuchar conexiones de clientes de socket.io
+io.on('connection', (socket) => {
+    console.log('Cliente conectado por WebSocket');
 
-// Obtener un producto por su ID
-app.get('/api/products/:pid', (req, res) => {
-    const product = productManager.getProductById(parseInt(req.params.pid));
+    // Cuando un producto se agrega o elimina, emite un evento 'productChange' a todos los clientes
+    socket.on('productChange', () => {
+        // Obtener la lista actualizada de productos
+        const updatedProducts = productManager.getProducts();
 
-    if (product) {
-        res.json(product);
-    } else {
-        res.status(404).json({ error: `No se encontró ningún producto con el ID ${productId}` });
-    }
-});
-
-// Agregar un nuevo producto
-app.post('/api/products', (req, res) => {
-    const { title, description, price, thumbnail, code, stock } = req.body;
-    productManager.addProduct(title, description, price, thumbnail, code, stock);
-    res.sendStatus(201);
-});
-
-// Actualizar un producto por su ID
-app.put('/api/products/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const { field, value } = req.body;
-    productManager.updateProduct(id, field, value);
-    res.sendStatus(200);
-});
-
-// Eliminar un producto por su ID
-app.delete('/api/products/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    productManager.deleteProduct(id);
-    res.sendStatus(204);
+        // Emitir la lista actualizada a todos los clientes conectados
+        io.emit('updatedProducts', updatedProducts);
+    });
 });
 
 
-// Ruta raíz para crear un nuevo carrito
-app.post('/api/carts', (req, res) => {
-    const newCart = []; // Inicializa newCart como una matriz vacía
-    carritoManager.addCarrito(newCart);
-    res.status(201).json(newCart);
-});
-
-
-// Ruta para listar los productos que pertenecen a un carrito específico
-app.get('/api/carts/:cid', (req, res) => {
-    const cartId = parseInt(req.params.cid);
-    const cart = carritoManager.getCarritoById(cartId);
-
-    if (!cart) {
-        res.status(404).json({ error: `No se encontró ningún carriasdto con el ID ${cartId}` });
-    } else {
-        res.json(cart.products);
-    }
-});
-
-// Ruta para listar los productos que pertenecen a un carrito específico
-app.get('/api/carts', (req, res) => {
-    const cart = carritoManager.getCarrito();
-
-    if (!cart) {
-        res.status(404).json({ error: `No se encontró ningún carriasdto con el ID ${cartId}` });
-    } else {
-        res.json(cart);
-    }
-});
-
-// Eliminar un carrito por su ID
-app.delete('/api/carts/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    carritoManager.deleteCarrito(id);
-    res.sendStatus(204);
-});
-
-
-
-// Ruta para agregar un producto al carrito
-app.post('/api/carts/:cid/product/:pid', (req, res) => {
-    const cartId = parseInt(req.params.cid);
-    const productId = parseInt(req.params.pid);
-    const { quantity } = req.body;
-
-    const cart = carritoManager.getCarritoById(cartId);
-    const productToAdd = productManager.getProductById(productId);
-
-    console.log('Cart:', cart);
-    console.log('Product:', productToAdd);
-    console.log('ProductId:', productId);
-
-    if (!cart) {
-        res.status(404).json({ error: `No se encontró ningún c44arrito con el ID ${cartId}` });
-    } else if (!productToAdd) {
-        res.status(404).json({ error: `No se encontró ningún producto con el ID ${productId}` });
-    } else {
-        const existingProduct = cart.products.find(item => item.product === productId);
-
-        if (existingProduct) {
-            existingProduct.quantity += quantity || 1;
-        } else {
-            cart.products.push({ product: productId, quantity: quantity || 1 });
-        }
-
-        carritoManager.updateCarrito(cart);
-
-        res.status(201).json(cart);
-    }
-});
 
 // Iniciar el servidor
 app.listen(port, () => {
     console.log(`Servidor Express escuchando en el puerto ${port}`);
 });
+
+
+
