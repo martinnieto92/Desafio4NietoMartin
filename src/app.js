@@ -9,6 +9,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server);
+const path = require('path') 
 
 
 // Configura Handlebars como motor de plantillas
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname,'/public')));
 
 app.use('/api/products', productRoutes)
 app.use('/api/carts', cartRoutes)
+
 
 // Escuchar conexiones de clientes de socket.io
 io.on('connection', (socket) => {
