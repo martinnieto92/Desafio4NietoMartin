@@ -5,10 +5,10 @@ const cartRoutes = require('./routes/cartRoutes.js')
 const app = express();
 const port = 8080; // 
 const handlebars = require('express-handlebars');
-const http = require('http');
-const socketIo = require('socket.io');
-const server = http.createServer(app);
-const io = socketIo(server);
+const { Server } = require('socket.io')
+
+
+
 const path = require('path') 
 
 
@@ -20,32 +20,33 @@ app.set('view engine','handlebars')
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-app.use(express.static(path.join(__dirname,'/public')));
+// Sirve archivos estáticos desde la carpeta 'public'
+
+
+app.use(express.static(path.join(__dirname +'/public')));
 
 app.use('/api/products', productRoutes)
+// Sirve los archivos estáticos, incluido socket.io.js
+app.use('/api/socket.io', express.static(__dirname + '/node_modules/socket.io/client-dist'));
+
 app.use('/api/carts', cartRoutes)
 
 
-// Escuchar conexiones de clientes de socket.io
-io.on('connection', (socket) => {
-    console.log('Cliente conectado por WebSocket');
 
-    // Cuando un producto se agrega o elimina, emite un evento 'productChange' a todos los clientes
-    socket.on('productChange', () => {
-        // Obtener la lista actualizada de productos
-        const updatedProducts = productManager.getProducts();
-
-        // Emitir la lista actualizada a todos los clientes conectados
-        io.emit('updatedProducts', updatedProducts);
-    });
-});
-
-
-
+const socketIo = require("socket.io");
 // Iniciar el servidor
-app.listen(port, () => {
+const httpServer = app.listen(port, () => {
     console.log(`Servidor Express escuchando en el puerto ${port}`);
 });
+
+const io = new socketIo.Server(httpServer);
+
+
+
+// // Iniciar el servidor
+// const serverExpress = app.listen(port, () => console.log(`Servidor Express escuchando en el puerto ${port}`))
+// const io = new Server (serverExpress)
+// require('socket.io')(io);
 
 
 

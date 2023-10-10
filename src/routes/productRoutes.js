@@ -15,10 +15,10 @@ router.get('/', (req, res) => {
 
     if (limit !== undefined) {
         res.setHeader('Content-Type','text/html');
-        res.status(200).render('products');
+        res.status(200).render('products',{products});
     } else {
         res.setHeader('Content-Type','text/html');
-        res.status(200).render('products');
+        res.status(200).render('products',{products});
         //res.json(products);
     }
 });

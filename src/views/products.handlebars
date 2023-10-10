@@ -2,7 +2,7 @@
 <li>{{this.title}} - ${{this.price}}</li>
 {{/each}}
 
-<form id="form" method="post" action="/realtimeproducts">
+<form id="form" method="post">
     <label for="title">title:</label>
     <input type="text" id="title" name="title" required>
 
@@ -10,7 +10,7 @@
     <input type="text" id="price" name="price" required>
 
     <label for="description">description:</label>
-    <textarea id="description" name="description" rows="4" required></textarea>
+    <textarea id="description" name="description" rows="1" required></textarea>
 
     <label for="category">category:</label>
     <input type="text" id="category" name="category" required>
@@ -23,8 +23,8 @@
 
     <button type="submit">Crear Producto</button>
 </form>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/src/public/home.js"></script>
+<script src="socket.io/socket.io.js"></script>
+<script src="src/public/home.js"></script>
 
 </body>
 
